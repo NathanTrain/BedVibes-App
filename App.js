@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LogBox, StatusBar, Text, View, StyleSheet, Dimensions } from 'react-native';
+import { LogBox, StatusBar, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,7 +7,7 @@ import Home from './screens/Home.js';
 import Produtos from './screens/Produtos.js';
 import Sobre from './screens/Sobre.js';
 import Perfil from './screens/Perfil.js';
-import {cores, theme} from './Themes.js'
+import {cores} from './Themes.js'
 
 LogBox.ignoreAllLogs(true)
 
