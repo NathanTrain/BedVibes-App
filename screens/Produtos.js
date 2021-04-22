@@ -8,7 +8,11 @@ import {
   Dimensions,
   ImageBackground,
 } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  ScrollView,
+  TouchableHighlight,
+  TouchableOpacity,
+} from "react-native-gesture-handler";
 import { cores, theme } from "../Themes";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -18,30 +22,29 @@ let widthWindow = Dimensions.get("window").width - 10;
 let heightWindow = Dimensions.get("window").width - 10;
 
 function Produtos({ navigation }) {
+  const backImage = (id) => {
+    return { uri: `https://picsum.photos/id/${id}/850/850` };
+  };
+
   const [abas, setAbas] = useState([
     {
-      name: "Tudo",
-      id: 0,
+      name: "COBERTAS",
+      icon: "bed",
+      image: backImage(251),
       active: true,
+      description:
+        "perfeitas para se aquecer, as cobertas são\ngrandes aliadas quando a temperatura cai,\nvocê merece esse conforto",
     },
     {
-      name: "Novidades",
-      id: 1,
+      name: "FRONHAS",
+      icon: "bed",
+      image: backImage(255),
       active: false,
     },
     {
-      name: "Fronhas",
-      id: 2,
-      active: false,
-    },
-    {
-      name: "Lençóis",
-      id: 3,
-      active: false,
-    },
-    {
-      name: "Cobertas",
-      id: 4,
+      name: "LENÇÓIS",
+      icon: "bed",
+      image: backImage(235),
       active: false,
     },
   ]);
@@ -126,9 +129,6 @@ function Produtos({ navigation }) {
     setProducts(newAbaType);
   }, []);
 
-  const backImage = (id) => {
-    return { uri: `https://picsum.photos/id/${id}/850/850` };
-  };
   return (
     <View style={{ flex: 1, backgroundColor: cores.dark }}>
       {/* header */}
@@ -158,48 +158,68 @@ function Produtos({ navigation }) {
       <View style={{ flex: 0.9, margin: 10, marginTop: 0 }}>
         <ScrollView style={styles.itemsGroup}>
           {/* category button */}
-          <TouchableOpacity onPress={() => alert("tela legal")}>
-            <ImageBackground
-              source={backImage(251)}
-              style={styles.backgroundImage}
-            >
-              <View style={styles.imageCover} />
-              <View style={styles.cover}>
-                <MaterialIcons name="bed-king" size={40} color={cores.extra} />
-                <Text style={styles.titleText}>COBERTAS</Text>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => alert("tela legal")}>
-            <ImageBackground
-              source={backImage(33)}
-              style={styles.backgroundImage}
-            >
-              <View style={styles.imageCover} />
-              <View style={styles.cover}>
-                <MaterialIcons name="bed" size={40} color={cores.extra} />
-                <Text style={styles.titleText}>FRONHAS</Text>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => alert("tela legal")}>
-            <ImageBackground
-              source={backImage(200)}
-              style={styles.backgroundImage}
-            >
-              <View style={styles.imageCover} />
-              <View style={styles.cover}>
-                <MaterialIcons name="bed-queen" size={40} color={cores.extra} />
-                <Text style={styles.titleText}>LENÇÓIS</Text>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
+          {abas.map(({ name, icon, image, active, description }) => {
+            return (
+              <SelectedAba
+                name={name}
+                icon={icon}
+                image={image}
+                active={active}
+                description={description}
+              />
+            );
+          })}
         </ScrollView>
       </View>
     </View>
   );
+}
+
+function SelectedAba({ name, icon, image, active, description }) {
+  if (active) {
+    return (
+      <View>
+        <ImageBackground
+          source={image}
+          blurRadius={2}
+          style={styles.backgroundImage}
+        >
+          <View style={styles.imageCover} />
+          <View style={styles.cover}>
+            <View style={styles.imageIcon}>
+              <MaterialIcons name="bed-king" size={40} color={cores.extra} />
+              <Text style={styles.titleText}>{name}</Text>
+              <View style={styles.descriptionBox}>
+                <Text style={styles.activeDescription}>"{description}"</Text>
+              </View>
+            </View>
+            <View style={{ position: "absolute"}}>
+              <TouchableOpacity onPress={()=>alert('hey13')} style={styles.imageCoverClicable}  />
+            </View>
+            <TouchableOpacity
+              onPress={() => alert("hey")}
+              style={styles.continueButton}
+            >
+              <Text style={styles.buttonText}>CONTINUAR</Text>
+              <Ionicons name="arrow-forward-outline" size={15} color="white" />
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </View>
+    );
+  } else {
+    return (
+      <TouchableOpacity onPress={() => alert("tela legal")}>
+        <ImageBackground source={image} style={styles.backgroundImage}>
+          <View style={styles.imageCover} />
+          <View style={styles.cover}>
+            <MaterialIcons name="bed-king" size={40} color={cores.extra} />
+            <Text style={styles.titleText}>{name}</Text>
+          </View>
+        </ImageBackground>
+      </TouchableOpacity>
+    );
+  }
 }
 
 function ModalProductScreen({ route, navigation }) {
@@ -331,9 +351,10 @@ const modalStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
   headerText: {
+    fontFamily: "Ginchiest",
     textAlign: "center",
     color: cores.extra,
-    fontSize: 25,
+    fontSize: 30,
   },
   headerButtons: {
     // backgroundColor: "salmon", // * for debuging
@@ -349,7 +370,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   backgroundImage: {
-    marginVertical: 10,
+    marginVertical: 5,
     width: widthWindow,
     height: 250,
   },
@@ -359,17 +380,51 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  imageIcon: {
+    flex: 0.6,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
   imageCover: {
     position: "absolute",
-    width: widthWindow,
-    height: 250,
     backgroundColor: "black",
     opacity: 0.5,
+    width: widthWindow,
+    height: 250,
+  },
+  imageCoverClicable: {
+    width: widthWindow,
+    height: 250,
   },
   titleText: {
-    margin: 0,
+    // backgroundColor:'green', // * for debuggin
     textAlign: "center",
     color: "white",
-    fontSize: 25,
+    fontFamily: "DolceVita",
+    fontSize: 30,
+  },
+  descriptionBox: {
+    alignItems: "center",
+  },
+  activeDescription: {
+    marginTop: 5,
+    marginBottom: 10,
+    color: "white",
+    fontFamily: "Arial",
+    fontSize: 10,
+    textAlign: "center",
+  },
+  continueButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: cores.extra,
+    padding: 5,
+    zIndex: 100,
+  },
+  buttonText: {
+    marginHorizontal: 5,
+    fontFamily: "DolceVita",
+    fontSize: 15,
+    color: "white",
   },
 });
