@@ -1,10 +1,17 @@
 import * as React from "react";
 import { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text, View, StyleSheet, Dimensions, Alert } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+} from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { cores, theme } from "../Themes";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useEffect } from "react";
 
 let widthWindow = Dimensions.get("window").width - 10;
@@ -119,6 +126,9 @@ function Produtos({ navigation }) {
     setProducts(newAbaType);
   }, []);
 
+  const backImage = (id) => {
+    return { uri: `https://picsum.photos/id/${id}/850/850` };
+  };
   return (
     <View style={{ flex: 1, backgroundColor: cores.dark }}>
       {/* header */}
@@ -127,27 +137,66 @@ function Produtos({ navigation }) {
           <Text style={styles.headerText}>Bed Vibes</Text>
           {/* header buttons */}
           <View style={styles.headerButtons}>
-            <TouchableOpacity style={styles.headerIndividualButton} >
-              <Ionicons name="search-outline" size={25} color="white" />
+            <TouchableOpacity
+              onPress={() => alert("pesquisa")}
+              style={styles.headerIndividualButton}
+            >
+              <Ionicons name="search" size={25} color="white" />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.headerIndividualButton} >
-              <Ionicons name="cart-outline" size={25} color="white" />
+            <TouchableOpacity
+              onPress={() => alert("carrinho")}
+              style={styles.headerIndividualButton}
+            >
+              <MaterialIcons name="shopping-outline" size={25} color="white" />
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
       {/* body */}
-      <View
-        style={{
-          flex: 0.9,
-          margin: 10,
-          marginTop: 0,
-          backgroundColor: "green",
-        }}
-      >
-        <ScrollView style={styles.itemsGroup}></ScrollView>
+      <View style={{ flex: 0.9, margin: 10, marginTop: 0 }}>
+        <ScrollView style={styles.itemsGroup}>
+          {/* category button */}
+          <TouchableOpacity onPress={() => alert("tela legal")}>
+            <ImageBackground
+              source={backImage(251)}
+              style={styles.backgroundImage}
+            >
+              <View style={styles.imageCover} />
+              <View style={styles.cover}>
+                <MaterialIcons name="bed-king" size={40} color={cores.extra} />
+                <Text style={styles.titleText}>COBERTAS</Text>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => alert("tela legal")}>
+            <ImageBackground
+              source={backImage(33)}
+              style={styles.backgroundImage}
+            >
+              <View style={styles.imageCover} />
+              <View style={styles.cover}>
+                <MaterialIcons name="bed" size={40} color={cores.extra} />
+                <Text style={styles.titleText}>FRONHAS</Text>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => alert("tela legal")}>
+            <ImageBackground
+              source={backImage(200)}
+              style={styles.backgroundImage}
+            >
+              <View style={styles.imageCover} />
+              <View style={styles.cover}>
+                <MaterialIcons name="bed-queen" size={40} color={cores.extra} />
+                <Text style={styles.titleText}>LENÇÓIS</Text>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
     </View>
   );
@@ -295,16 +344,32 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  headerIndividualButton:{
-    padding:5,
-    paddingHorizontal:10,
+  headerIndividualButton: {
+    padding: 5,
+    paddingHorizontal: 10,
   },
-
-  image: {
-    width: widthWindow - 320,
-    height: heightWindow - 275,
-    zIndex: 10,
-    resizeMode: "stretch",
-    borderRadius: 4,
+  backgroundImage: {
+    marginVertical: 10,
+    width: widthWindow,
+    height: 250,
+  },
+  cover: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageCover: {
+    position: "absolute",
+    width: widthWindow,
+    height: 250,
+    backgroundColor: "black",
+    opacity: 0.5,
+  },
+  titleText: {
+    margin: 0,
+    textAlign: "center",
+    color: "white",
+    fontSize: 25,
   },
 });
