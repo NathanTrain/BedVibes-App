@@ -7,12 +7,9 @@ import {
   StyleSheet,
   Dimensions,
   ImageBackground,
+  Image,
 } from "react-native";
-import {
-  ScrollView,
-  TouchableHighlight,
-  TouchableOpacity,
-} from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { cores, theme } from "../Themes";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -22,40 +19,32 @@ let widthWindow = Dimensions.get("window").width - 10;
 let heightWindow = Dimensions.get("window").width - 10;
 
 function Produtos({ navigation }) {
-  const backImage = (id) => {
-    return { uri: `https://picsum.photos/id/${id}/850/850` };
-  };
-
   const [abas, setAbas] = useState([
     {
       name: "COBERTAS",
-      icon: "bed",
-      image: backImage(251),
-      active: true,
+      icon: require("../assets/icons/coberta-icon.png"),
+      image: require("../assets/category-images/coberta-category.png"),
+      active: false,
       description:
-        "perfeitas para se aquecer, as cobertas são\ngrandes aliadas quando a temperatura cai,\nvocê merece esse conforto",
+        "perfeitas para se aquecer, as cobertas são grandes aliadas\nquando a temperatura cai, você merece esse conforto",
     },
     {
       name: "FRONHAS",
-      icon: "bed",
-      image: backImage(255),
+      icon: require("../assets/icons/fronha-icon.png"),
+      image: require("../assets/category-images/fronha-category.png"),
       active: false,
+      description:
+        "Além de deixar a cama com uma decoração apaixonante,\na fronha vai proporcionar um sono mais confortável e acolhedor.",
     },
     {
       name: "LENÇÓIS",
-      icon: "bed",
-      image: backImage(235),
+      icon: require("../assets/icons/lencol-icon.png"),
+      image: require("../assets/category-images/lencol-category.png"),
       active: false,
+      description:
+        "Lençóis: Sua cama merece toda a delicadeza dos nossos lençóis.\nCom lindas estampas, as peças vão proporcionar noites encantadoras.",
     },
   ]);
-
-  function nextAba(id) {
-    let newAbas = abas.map((val) => {
-      val.id == id ? (val.active = true) : (val.active = false);
-      return val;
-    });
-    setAbas(newAbas);
-  }
 
   const [products, setProducts] = useState([
     {
@@ -158,7 +147,7 @@ function Produtos({ navigation }) {
       <View style={{ flex: 0.9, margin: 10, marginTop: 0 }}>
         <ScrollView style={styles.itemsGroup}>
           {/* category button */}
-          {abas.map(({ name, icon, image, active, description }) => {
+          {abas.map(({ name, icon, image, active, description }, id) => {
             return (
               <SelectedAba
                 name={name}
@@ -166,6 +155,9 @@ function Produtos({ navigation }) {
                 image={image}
                 active={active}
                 description={description}
+                id={id}
+                abas={abas}
+                setAbas={setAbas}
               />
             );
           })}
@@ -175,26 +167,58 @@ function Produtos({ navigation }) {
   );
 }
 
-function SelectedAba({ name, icon, image, active, description }) {
+function SelectedAba({
+  name,
+  icon,
+  image,
+  active,
+  description,
+  id,
+  abas,
+  setAbas,
+}) {
+  function activeAba(id) {
+    let newAbas = [];
+    abas.map((val, index) => {
+      // val.active = id == index ? true : false;
+      if (id == index) {
+        if (val.active) {
+          val.active = false;
+        } else val.active = true;
+      } else {
+        val.active = false;
+      }
+      newAbas.push(val);
+    });
+    setAbas(newAbas);
+  }
+
   if (active) {
     return (
       <View>
         <ImageBackground
           source={image}
-          blurRadius={2}
+          blurRadius={2.5}
           style={styles.backgroundImage}
         >
-          <View style={styles.imageCover} />
           <View style={styles.cover}>
             <View style={styles.imageIcon}>
-              <MaterialIcons name="bed-king" size={40} color={cores.extra} />
+              <Image source={icon} style={{ height: 55, width: 55 }} />
               <Text style={styles.titleText}>{name}</Text>
               <View style={styles.descriptionBox}>
                 <Text style={styles.activeDescription}>"{description}"</Text>
               </View>
             </View>
-            <View style={{ position: "absolute"}}>
-              <TouchableOpacity onPress={()=>alert('hey13')} style={styles.imageCoverClicable}  />
+            <View style={{ position: "absolute" }}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => activeAba(id)}
+                style={{
+                  ...styles.imageCoverClicable,
+                  backgroundColor: "black",
+                  opacity: 0,
+                }}
+              />
             </View>
             <TouchableOpacity
               onPress={() => alert("hey")}
@@ -209,11 +233,10 @@ function SelectedAba({ name, icon, image, active, description }) {
     );
   } else {
     return (
-      <TouchableOpacity onPress={() => alert("tela legal")}>
+      <TouchableOpacity activeOpacity={0.5} onPress={() => activeAba(id)}>
         <ImageBackground source={image} style={styles.backgroundImage}>
-          <View style={styles.imageCover} />
           <View style={styles.cover}>
-            <MaterialIcons name="bed-king" size={40} color={cores.extra} />
+            <Image source={icon} style={{ height: 55, width: 55 }} />
             <Text style={styles.titleText}>{name}</Text>
           </View>
         </ImageBackground>
@@ -384,13 +407,6 @@ const styles = StyleSheet.create({
     flex: 0.6,
     justifyContent: "flex-end",
     alignItems: "center",
-  },
-  imageCover: {
-    position: "absolute",
-    backgroundColor: "black",
-    opacity: 0.5,
-    width: widthWindow,
-    height: 250,
   },
   imageCoverClicable: {
     width: widthWindow,
