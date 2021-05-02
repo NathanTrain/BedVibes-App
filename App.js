@@ -3,6 +3,7 @@ import { LogBox, StatusBar, Dimensions } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useFonts } from "expo-font";
 import Home from "./screens/Home.js";
 import Produtos from "./screens/Produtos.js";
 import Sobre from "./screens/Sobre.js";
@@ -32,6 +33,19 @@ function PerfilScreen() {
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  // ! importing fonts
+  const [loaded] = useFonts({
+    DolceVita: require("./assets/fonts/Dolce-Vita.ttf"),
+    DolceVitaLight: require("./assets/fonts/Dolce-Vita-Light.ttf"),
+    DolceVitaBold: require("./assets/fonts/Dolce-Vita-Heavy-Bold.ttf"),
+    Ginchiest: require("./assets/fonts/Ginchiest.ttf"),
+    Adam: require("./assets/fonts/Adam-Bold.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <StatusBar style="auto" backgroundColor={cores.dark} />
