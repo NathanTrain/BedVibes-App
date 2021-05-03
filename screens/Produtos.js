@@ -14,8 +14,14 @@ import { cores, theme } from "../Themes";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ProductScreen from "./sub-screens/ProductCategory.js";
+import Cart from "./sub-screens/Cart.js";
 
 let widthWindow = Dimensions.get("window").width - 10;
+
+function CartScreen({route, navigation}) {
+  return <Cart route={route} navigation={navigation} shoppingList={[]} />
+}
+
 
 function Produtos({ navigation }) {
   const [abas, setAbas] = useState([
@@ -140,7 +146,7 @@ function Produtos({ navigation }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => alert("carrinho")}
+              onPress={() => navigation.navigate("Cart", {screenRoute: "Cart"})}
               style={styles.headerIndividualButton}
             >
               <MaterialIcons name="shopping-outline" size={25} color="white" />
@@ -242,6 +248,7 @@ function SelectedAba({
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("Produto", {
+                  screenRoute: "Produto",
                   screenName: name,
                   itens: itens,
                 });
@@ -269,6 +276,33 @@ function SelectedAba({
   }
 }
 
+function HeaderButtons({navigation, route}) {
+  if (route.name == "Produto"){
+    return (
+      <View style={styles.headerButtons}>
+        <TouchableOpacity
+          onPress={() => alert("pesquisa")}
+          style={styles.headerIndividualButton}
+        >
+          <Ionicons name="search" size={25} color="white" />
+        </TouchableOpacity>
+  
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Cart")}
+          style={styles.headerIndividualButton}
+        >
+          <MaterialIcons
+            name="shopping-outline"
+            size={25}
+            color="white"
+          />
+        </TouchableOpacity>
+      </View>
+    )
+  } else return <View />
+  
+}
+
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
@@ -288,7 +322,7 @@ function Root() {
   return (
     <RootStack.Navigator
       mode="modal"
-      screenOptions={{
+      screenOptions={({route, navigation}) => ({
         headerStyle: {
           backgroundColor: cores.dark,
           borderBottomColor: "#555",
@@ -304,28 +338,11 @@ function Root() {
         headerPressColorAndroid: "white",
         headerRight: () => {
           return (
-            <View style={styles.headerButtons}>
-              <TouchableOpacity
-                onPress={() => alert("pesquisa")}
-                style={styles.headerIndividualButton}
-              >
-                <Ionicons name="search" size={25} color="white" />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => alert("carrinho")}
-                style={styles.headerIndividualButton}
-              >
-                <MaterialIcons
-                  name="shopping-outline"
-                  size={25}
-                  color="white"
-                />
-              </TouchableOpacity>
-            </View>
+            <HeaderButtons navigation={navigation} route={route} />
           );
         },
-      }}
+      })
+      }
     >
       <RootStack.Screen
         name="Main"
@@ -333,6 +350,7 @@ function Root() {
         options={{ headerShown: false }}
       />
       <RootStack.Screen name="Produto" component={ProductScreen} />
+      <RootStack.Screen name="Cart" component={CartScreen} />
     </RootStack.Navigator>
   );
 }
