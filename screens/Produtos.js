@@ -13,10 +13,9 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { cores, theme } from "../Themes";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useEffect } from "react";
+import ProductScreen from "./sub-screens/ProductCategory.js";
 
 let widthWindow = Dimensions.get("window").width - 10;
-let heightWindow = Dimensions.get("window").width - 10;
 
 function Produtos({ navigation }) {
   const [abas, setAbas] = useState([
@@ -48,80 +47,87 @@ function Produtos({ navigation }) {
 
   const [products, setProducts] = useState([
     {
-      abaType: [2],
-      title: "Fronha Francesa",
-      description: "descrição aqui\noutra linha aqui",
-      materials: [
-        { id: 1, title: "Algodão" },
-        { id: 2, title: "Seda" },
-        { id: 3, title: "Fibra" },
+      type: "COBERTAS",
+      itens: [
+        {
+          productName: "Cobertor Microfibra Estampado (King)",
+          preco: "54,50",
+          cores: ["vermelho", "azul", "verde água"],
+          image: require("../assets/images/Coberta1.png"),
+        },
+        {
+          productName: "Cobertor Microfibra Estampado",
+          preco: "54,50",
+          cores: ["roxo/branco", "azul/branco", "verde água/branco"],
+          image: require("../assets/images/Coberta2.png"),
+        },
+        {
+          productName: "Cobertor Microfibra de Casal",
+          preco: "54,50",
+          cores: ["vermelho", "rosa claro"],
+          image: require("../assets/images/Coberta3.png"),
+        },
+        {
+          productName: "Cobertor Microfibra de Solteiro",
+          preco: "54,50",
+          cores: ["marrom", "azul escuro"],
+          image: require("../assets/images/Coberta4.png"),
+        },
       ],
-      image: { uri: "https://picsum.photos/300/250" },
     },
     {
-      abaType: [1, 3],
-      title: "Lençol gotoso",
-      description: "Aaaa \nsocorro \nmemata",
-      materials: [
-        { id: 0, title: "Algodão" },
-        { id: 1, title: "Seda" },
+      type: "FRONHAS",
+      itens: [
+        {
+          productName: "Jogo de Fronhas Microfibra Estampada",
+          preco: "54,50",
+          cores: ["amarelo queimado", "rosa claro"],
+          image: require("../assets/images/Fronha1.png"),
+        },
+        {
+          productName: "Fronha Microfibra Avulsa",
+          preco: "54,50",
+          cores: ["cinza", "roxo claro", "azul claro"],
+          image: require("../assets/images/Fronha2.png"),
+        },
+        {
+          productName: "Jogo de Fronha Microfibra Estampada",
+          preco: "54,50",
+          cores: ["azul/azul claro", "azul claro"],
+          image: require("../assets/images/Fronha3.png"),
+        },
       ],
-      image: { uri: "https://picsum.photos/id/21/300/250" },
     },
     {
-      abaType: [1, 4],
-      title: "Cobertor quentin hmm",
-      description: "descrição aqui\noutra linha aqui",
-      materials: [
-        { id: 0, title: "Algodão" },
-        { id: 1, title: "Fibra" },
+      type: "LENÇÓIS",
+      itens: [
+        {
+          productName: "Jogo de Lençol Microfibra (Solteiro)",
+          preco: "54,50",
+          cores: ["azul", "verde claro"],
+          image: require("../assets/images/Lençol1.png"),
+        },
+        {
+          productName: "Lençol de Elastico Avulso",
+          preco: "54,50",
+          cores: ["rosa", "azul claro"],
+          image: require("../assets/images/Lençol3.png"),
+        },
       ],
-      image: { uri: "https://picsum.photos/id/28/300/250" },
-    },
-    {
-      abaType: [4],
-      title: "cobertor lindo",
-      description: "Aaaa \nsocorro \nmemata",
-      materials: [
-        { id: 0, title: "Seda" },
-        { id: 1, title: "Fibra" },
-      ],
-      image: { uri: "https://picsum.photos/id/27/300/250" },
-    },
-    {
-      abaType: [3],
-      title: "Lençol lindo",
-      description: "descrição aqui\noutra linha aqui",
-      materials: [
-        { id: 0, title: "Algodão" },
-        { id: 1, title: "Seda" },
-      ],
-      image: { uri: "https://picsum.photos/id/24/300/250" },
-    },
-    {
-      abaType: [1, 2],
-      title: "Fronha fofa",
-      description: "Aaaa \nsocorro \nmemata",
-      materials: [
-        { id: 0, title: "Seda" },
-        { id: 1, title: "Fibra" },
-      ],
-      image: { uri: "https://picsum.photos/id/25/300/250" },
     },
   ]);
-
-  useEffect(() => {
-    let newAbaType = [];
-    products.map((val) => {
-      val.abaType.includes(1) ? newAbaType.unshift(val) : newAbaType.push(val);
-    });
-    setProducts(newAbaType);
-  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: cores.dark }}>
       {/* header */}
-      <View style={{ flex: 0.1, zIndex: 50 }}>
+      <View
+        style={{
+          flex: 0.1,
+          zIndex: 50,
+          borderBottomColor: "#555",
+          borderBottomWidth: 0.5,
+        }}
+      >
         <View style={{ ...theme.container, paddingVertical: 10 }}>
           <Text style={styles.headerText}>Bed Vibes</Text>
           {/* header buttons */}
@@ -148,6 +154,15 @@ function Produtos({ navigation }) {
         <ScrollView style={styles.itemsGroup}>
           {/* category button */}
           {abas.map(({ name, icon, image, active, description }, id) => {
+            var listItens;
+            {
+              products.map((category) => {
+                if (category.type === name) {
+                  listItens = category.itens;
+                }
+                return JSON.stringify(listItens);
+              });
+            }
             return (
               <SelectedAba
                 name={name}
@@ -158,6 +173,8 @@ function Produtos({ navigation }) {
                 id={id}
                 abas={abas}
                 setAbas={setAbas}
+                navigation={navigation}
+                itens={listItens}
               />
             );
           })}
@@ -176,6 +193,8 @@ function SelectedAba({
   id,
   abas,
   setAbas,
+  navigation,
+  itens,
 }) {
   function activeAba(id) {
     let newAbas = [];
@@ -221,7 +240,12 @@ function SelectedAba({
               />
             </View>
             <TouchableOpacity
-              onPress={() => alert("hey")}
+              onPress={() => {
+                navigation.navigate("Produto", {
+                  screenName: name,
+                  itens: itens,
+                });
+              }}
               style={styles.continueButton}
             >
               <Text style={styles.buttonText}>CONTINUAR</Text>
@@ -243,49 +267,6 @@ function SelectedAba({
       </TouchableOpacity>
     );
   }
-}
-
-function ModalProductScreen({ route, navigation }) {
-  navigation.setOptions({ title: route.params.title });
-
-  const renderItem = ({ item }) => {
-    return (
-      <View style={modalStyles.item}>
-        <Ionicons name="arrow-forward-outline" size={20} color={"white"} />
-        <Text style={modalStyles.itemText}>{item.title}</Text>
-      </View>
-    );
-  };
-
-  const [DATA, setDATA] = useState([]);
-
-  useEffect(() => {
-    var data = [];
-    route.params.materials.map((item) => {
-      data.push(item);
-    });
-    setDATA(data);
-  }, []);
-
-  const showAlert = () => {
-    Alert.alert(
-      //title
-      "OPA!",
-      // mensagem
-      "Infelizmente não é possivel realizar um orçamento pois somos uma empresa fictícia.",
-      [
-        {
-          text: "ata kk",
-        },
-      ]
-    );
-  };
-
-  return <View />;
-}
-
-function ProductsView() {
-  return <View />;
 }
 
 const MainStack = createStackNavigator();
@@ -311,17 +292,39 @@ function Root() {
         headerStyle: {
           backgroundColor: cores.dark,
           borderBottomColor: "#555",
-          borderBottomWidth: 1,
+          borderBottomWidth: 0.5,
         },
         headerTitleStyle: {
-          color: cores.title,
-          fontSize: 24,
-          fontWeight: "normal",
-          paddingRight: 20,
+          color: "white",
+          fontFamily: "DolceVita",
+          fontSize: 20,
         },
-        headerTitleAlign: "left",
-        headerTintColor: cores.extra,
-        headerPressColorAndroid: cores.extra,
+        headerTitleAlign: "center",
+        headerTintColor: "white",
+        headerPressColorAndroid: "white",
+        headerRight: () => {
+          return (
+            <View style={styles.headerButtons}>
+              <TouchableOpacity
+                onPress={() => alert("pesquisa")}
+                style={styles.headerIndividualButton}
+              >
+                <Ionicons name="search" size={25} color="white" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => alert("carrinho")}
+                style={styles.headerIndividualButton}
+              >
+                <MaterialIcons
+                  name="shopping-outline"
+                  size={25}
+                  color="white"
+                />
+              </TouchableOpacity>
+            </View>
+          );
+        },
       }}
     >
       <RootStack.Screen
@@ -329,48 +332,11 @@ function Root() {
         component={MainStackScreen}
         options={{ headerShown: false }}
       />
-      <RootStack.Screen name="Produto" component={ModalProductScreen} />
+      <RootStack.Screen name="Produto" component={ProductScreen} />
     </RootStack.Navigator>
   );
 }
 export default Root;
-
-const modalStyles = StyleSheet.create({
-  container: {
-    backgroundColor: cores.dark,
-    flex: 1,
-    padding: 20,
-    paddingHorizontal: 30,
-  },
-  image: {
-    width: widthWindow + 10,
-    height: heightWindow - 150,
-    paddingBottom: 10,
-  },
-  descriptionTitle: {
-    color: cores.title,
-    fontSize: 18,
-  },
-  description: {
-    color: "white",
-    marginLeft: 25,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  list: {
-    marginLeft: 25,
-    marginBottom: 20,
-  },
-  item: {
-    paddingBottom: 8,
-    flexDirection: "row",
-  },
-  itemText: {
-    color: "white",
-    fontSize: 16,
-    paddingLeft: 5,
-  },
-});
 
 const styles = StyleSheet.create({
   headerText: {
@@ -380,7 +346,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   headerButtons: {
-    // backgroundColor: "salmon", // * for debuging
     padding: 10,
     position: "absolute",
     right: 0,
