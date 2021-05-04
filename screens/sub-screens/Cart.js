@@ -1,12 +1,42 @@
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { cores } from "../../Themes";
 
-function ItemListed({ item }) {}
+function ItemListed({ cart, item, setCart }) {
+  const { productName, preco, cores, image } = item;
+  
+  function removeItemFromList() {
+    let newCart = []
+    cart.map((i) => {
+      if (i !== item) {
+        newCart.push(i);
+      }
+    });
+    setCart(newCart)
+  }
 
-function Cart({ route, navigation, shoppingList }) {
-  if (shoppingList.length == 0) {
+  return (
+    <View style={listStyle.box}>
+      <Text>{productName}</Text>
+      <View>
+        <TouchableOpacity 
+            onPress={() => {removeItemFromList()} }>
+          <Ionicons
+            name="close"
+            size={18}
+            color={"black"}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function Cart({ cart, setCart }) {
+  setCart(cart);
+  if (cart.length == 0) {
     return (
       <View style={stylesWithoutItens.container}>
         <View style={stylesWithoutItens.imageBox}>
@@ -24,15 +54,34 @@ function Cart({ route, navigation, shoppingList }) {
       </View>
     );
   } else {
-    return shoppingList.map((item) => {
-      return (
-        <View>
-          <Text>{item.name}</Text>
-        </View>
-      );
-    });
+    return (
+      <View style={listStyle.container}>
+        <ScrollView>
+          {cart.map((item) => {
+            return <ItemListed item={item} cart={cart} setCart={setCart} />;
+          })}
+        </ScrollView>
+      </View>
+    );
   }
 }
+
+const listStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: cores.dark,
+    justifyContent: "flex-start",
+    alignItems: "stretch",
+  },
+  box: {
+    backgroundColor: "green",
+    margin: 5,
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+});
 
 const stylesWithoutItens = StyleSheet.create({
   container: {
@@ -61,7 +110,7 @@ const stylesWithoutItens = StyleSheet.create({
   text: {
     margin: 10,
     color: "#555",
-    fontFamily: "Adam",
+    fontFamily: "LouisGeorgeCafe",
     fontSize: 14,
   },
 });

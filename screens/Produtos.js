@@ -1,29 +1,29 @@
 import * as React from "react";
 import { useState } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
 import {
-  Text,
-  View,
-  StyleSheet,
-  Dimensions,
-  ImageBackground,
-  Image,
-} from "react-native";
+  CardStyleInterpolators,
+  createStackNavigator,
+} from "@react-navigation/stack";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { cores, theme } from "../Themes";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ProductScreen from "./sub-screens/ProductCategory.js";
 import Cart from "./sub-screens/Cart.js";
+import SelectedCategory from "./sub-screens/SelectedCategory";
 
 let widthWindow = Dimensions.get("window").width - 10;
 
-function CartScreen({route, navigation}) {
-  return <Cart route={route} navigation={navigation} shoppingList={[]} />
+function CartScreen({ route, navigation }) {
+  return (
+    <Cart
+      cart={route.params.cart}
+      setCart={route.params.setCart}
+    />
+  );
 }
 
-
-function Produtos({ navigation }) {
+function Produtos({ navigation, route }) {
   const [abas, setAbas] = useState([
     {
       name: "COBERTAS",
@@ -146,10 +146,15 @@ function Produtos({ navigation }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate("Cart", {screenRoute: "Cart"})}
+              onPress={() =>
+                navigation.navigate("Cart", {
+                  cart: route.params.cart,
+                  setCart: route.params.setCart,
+                })
+              }
               style={styles.headerIndividualButton}
             >
-              <MaterialIcons name="shopping-outline" size={25} color="white" />
+              <Ionicons name="cart-outline" size={25} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -170,7 +175,7 @@ function Produtos({ navigation }) {
               });
             }
             return (
-              <SelectedAba
+              <SelectedCategory
                 name={name}
                 icon={icon}
                 image={image}
@@ -181,6 +186,8 @@ function Produtos({ navigation }) {
                 setAbas={setAbas}
                 navigation={navigation}
                 itens={listItens}
+                cart={route.params.cart}
+                setCart={route.params.setCart}
               />
             );
           })}
@@ -190,94 +197,8 @@ function Produtos({ navigation }) {
   );
 }
 
-function SelectedAba({
-  name,
-  icon,
-  image,
-  active,
-  description,
-  id,
-  abas,
-  setAbas,
-  navigation,
-  itens,
-}) {
-  function activeAba(id) {
-    let newAbas = [];
-    abas.map((val, index) => {
-      // val.active = id == index ? true : false;
-      if (id == index) {
-        if (val.active) {
-          val.active = false;
-        } else val.active = true;
-      } else {
-        val.active = false;
-      }
-      newAbas.push(val);
-    });
-    setAbas(newAbas);
-  }
-
-  if (active) {
-    return (
-      <View>
-        <ImageBackground
-          source={image}
-          blurRadius={2.5}
-          style={styles.backgroundImage}
-        >
-          <View style={styles.cover}>
-            <View style={styles.imageIcon}>
-              <Image source={icon} style={{ height: 55, width: 55 }} />
-              <Text style={styles.titleText}>{name}</Text>
-              <View style={styles.descriptionBox}>
-                <Text style={styles.activeDescription}>"{description}"</Text>
-              </View>
-            </View>
-            <View style={{ position: "absolute" }}>
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => activeAba(id)}
-                style={{
-                  ...styles.imageCoverClicable,
-                  backgroundColor: "black",
-                  opacity: 0,
-                }}
-              />
-            </View>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Produto", {
-                  screenRoute: "Produto",
-                  screenName: name,
-                  itens: itens,
-                });
-              }}
-              style={styles.continueButton}
-            >
-              <Text style={styles.buttonText}>CONTINUAR</Text>
-              <Ionicons name="arrow-forward-outline" size={15} color="white" />
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
-      </View>
-    );
-  } else {
-    return (
-      <TouchableOpacity activeOpacity={0.5} onPress={() => activeAba(id)}>
-        <ImageBackground source={image} style={styles.backgroundImage}>
-          <View style={styles.cover}>
-            <Image source={icon} style={{ height: 55, width: 55 }} />
-            <Text style={styles.titleText}>{name}</Text>
-          </View>
-        </ImageBackground>
-      </TouchableOpacity>
-    );
-  }
-}
-
-function HeaderButtons({navigation, route}) {
-  if (route.name == "Produto"){
+function HeaderButtons({ navigation, route }) {
+  if (route.name == "Produto") {
     return (
       <View style={styles.headerButtons}>
         <TouchableOpacity
@@ -286,43 +207,49 @@ function HeaderButtons({navigation, route}) {
         >
           <Ionicons name="search" size={25} color="white" />
         </TouchableOpacity>
-  
+
         <TouchableOpacity
-          onPress={() => navigation.navigate("Cart")}
+          onPress={() =>
+            navigation.navigate("Cart", {
+              cart: route.params.cart,
+              setCart: route.params.setCart,
+            })
+          }
           style={styles.headerIndividualButton}
         >
-          <MaterialIcons
-            name="shopping-outline"
-            size={25}
-            color="white"
-          />
+          <Ionicons name="cart-outline" size={25} color="white" />
         </TouchableOpacity>
       </View>
-    )
-  } else return <View />
-  
+    );
+  } else return <View />;
 }
 
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
-function MainStackScreen() {
+function MainStackScreen({ route }) {
   return (
     <MainStack.Navigator>
       <MainStack.Screen
         name="Produtos"
         component={Produtos}
         options={{ headerShown: false }}
+        initialParams={{
+          cart: route.params.cart,
+          setCart: route.params.setCart,
+        }}
       />
     </MainStack.Navigator>
   );
 }
 
 function Root() {
+  const [cart, setCart] = useState([]);
+
   return (
     <RootStack.Navigator
       mode="modal"
-      screenOptions={({route, navigation}) => ({
+      screenOptions={({ route, navigation }) => ({
         headerStyle: {
           backgroundColor: cores.dark,
           borderBottomColor: "#555",
@@ -338,19 +265,32 @@ function Root() {
         headerPressColorAndroid: "white",
         headerRight: () => {
           return (
-            <HeaderButtons navigation={navigation} route={route} />
+            <HeaderButtons
+              navigation={navigation}
+              route={route}
+              cart={cart}
+              setCart={setCart}
+            />
           );
         },
-      })
-      }
+      })}
     >
       <RootStack.Screen
         name="Main"
         component={MainStackScreen}
         options={{ headerShown: false }}
+        initialParams={{ cart, setCart }}
       />
-      <RootStack.Screen name="Produto" component={ProductScreen} />
-      <RootStack.Screen name="Cart" component={CartScreen} />
+      <RootStack.Screen
+        name="Produto"
+        component={ProductScreen}
+        initialParams={{ cart, setCart }}
+      />
+      <RootStack.Screen
+        name="Cart"
+        component={CartScreen}
+        initialParams={{ cart, setCart }}
+      />
     </RootStack.Navigator>
   );
 }

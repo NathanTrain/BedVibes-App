@@ -2,7 +2,9 @@ import * as React from "react";
 import { LogBox, StatusBar, Dimensions } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useFonts } from "expo-font";
 import Home from "./screens/Home.js";
 import Produtos from "./screens/Produtos.js";
@@ -40,6 +42,8 @@ export default function App() {
     DolceVitaBold: require("./assets/fonts/Dolce-Vita-Heavy-Bold.ttf"),
     Ginchiest: require("./assets/fonts/Ginchiest.ttf"),
     Adam: require("./assets/fonts/Adam-Bold.ttf"),
+    LouisGeorgeCafeLight: require("./assets/fonts/Louis-George-Cafe-Light.ttf"),
+    LouisGeorgeCafe: require("./assets/fonts/Louis-George-Cafe.ttf"),
   });
 
   if (!loaded) {
@@ -57,7 +61,7 @@ export default function App() {
             if (route.name === "Home") {
               iconName = focused ? "home-sharp" : "home-outline";
             } else if (route.name === "Produtos") {
-              iconName = focused ? "cart-sharp" : "cart-outline";
+              iconName = focused ? "shopping" : "shopping-outline";
             } else if (route.name === "Sobre") {
               iconName = focused
                 ? "ellipsis-horizontal-circle-sharp"
@@ -66,7 +70,11 @@ export default function App() {
               iconName = focused ? "person-sharp" : "person-outline";
             }
 
-            return <Ionicons name={iconName} size={size} color={color} />;
+            if (route.name === "Produtos") {
+              return <MaterialIcons name={iconName} size={size} color={color} />
+            } else {
+              return <Ionicons name={iconName} size={size} color={color} />
+            }
           },
         })}
         tabBarOptions={{
